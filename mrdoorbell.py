@@ -29,27 +29,38 @@ class MrDoorbell(discord.Client):
 
     EVERYONE = '@everyone'
 
-    #
-    #
-    #
-    async def on_ready(self):
+    def __init__(self):
+        super()
 
-        has_run = None
-        channel = int(os.getenv('GPIO_PIN'))
+        self._channel = int(os.getenv('GPIO_PIN'))
 
         GPIO.setwarnings(False)
 
         # Use physical pin numbering
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self._channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+    #
+    #
+    #
+    async def on_connect(self):
+
+        has_run = None
 
         while True:
             now = datetime.timestamp(datetime.now())
 
             # block for 60 seconds after pressing doorbell
-            if GPIO.input(channel) == GPIO.HIGH and (has_run == None or has_run + timedelta(seconds=6000) <= now):
+            if GPIO.input(self._channel) == GPIO.HIGH and (has_run == None or has_run + timedelta(seconds=6000) <= now):
                 has_run = now
                 await self._handlePressDoorbell()
+
+    #
+    #
+    #
+    #
+    async def on_disconnect(self):
+        GPIO.clearall()
 
     #
     # if doorbell is pressed create message and send to channel

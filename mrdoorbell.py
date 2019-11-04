@@ -46,6 +46,7 @@ class MrDoorbell(discord.Client):
         while True:
             now = datetime.timestamp(datetime.now())
 
+            # block for 60 seconds after pressing doorbell
             if GPIO.input(channel) == GPIO.HIGH && (has_run == None or has_run + timedelta(seconds=6000) <= now):
                 has_run = now
                 await self._handlePressDoorbell()

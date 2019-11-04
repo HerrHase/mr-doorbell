@@ -4,7 +4,7 @@
 #
 # Installing:
 #
-# apt-get install rpi.gpio
+# apt-get install python3-rpi.gpio
 #
 # pip3 install discord.py
 # pip3 install python-dotenv
@@ -48,12 +48,11 @@ class MrDoorbell(discord.Client):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        GPIO.add_event_detect(channel, GPIO.RISING)
-
         while True:
             if GPIO.input(channel) == GPIO.HIGH:
-                await self._handlePressDoorbell()
-                time.sleep(SLEEP)
+                print('pressed!')
+                #self._handlePressDoorbell()
+                #time.sleep(SLEEP)
 
 
     #

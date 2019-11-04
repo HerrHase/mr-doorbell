@@ -29,8 +29,10 @@ class MrDoorbell(discord.Client):
 
     EVERYONE = '@everyone'
 
-    def __init__(self):
-        super()
+    #
+    #
+    #
+    async def on_connect(self):
 
         self._channel = int(os.getenv('GPIO_PIN'))
 
@@ -39,11 +41,6 @@ class MrDoorbell(discord.Client):
         # Use physical pin numbering
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self._channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-    #
-    #
-    #
-    async def on_connect(self):
 
         has_run = None
 

@@ -50,9 +50,8 @@ class MrDoorbell(discord.Client):
 
         while True:
             if GPIO.input(channel) == GPIO.HIGH:
-                print('pressed!')
-                #self._handlePressDoorbell()
-                #time.sleep(SLEEP)
+                self._handlePressDoorbell()
+                time.sleep(SLEEP)
 
 
     #

@@ -6,14 +6,13 @@ sudo nano /lib/systemd/system/mrdoorbell.service
 
 ```bash
 [Unit]
-Description=Dummy Service
+Description=Doorbell Service
 After=multi-user.target
-Conflicts=getty@tty1.service
 
 [Service]
-Type=simple
-ExecStart=/usr/bin/python3 /usr/bin/mrdoorbell.py
-StandardInput=tty-force
+Type=idle
+ExecStart=/usr/bin/python3 <path-to-script>/mrdoorbell.py
+User=pi
 
 [Install]
 WantedBy=multi-user.target

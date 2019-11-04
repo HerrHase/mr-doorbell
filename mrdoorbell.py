@@ -16,6 +16,8 @@ import os
 import time
 import RPi.GPIO as GPIO
 
+from datetime import datetime, timedelta
+
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
@@ -26,12 +28,13 @@ load_dotenv(find_dotenv())
 class MrDoorbell(discord.Client):
 
     EVERYONE = '@everyone'
-    SLEEP = 60
 
     #
     #
     #
     async def on_ready(self):
+
+        has_run = None
         channel = int(os.getenv('GPIO_PIN'))
 
         GPIO.setwarnings(False)
@@ -41,9 +44,11 @@ class MrDoorbell(discord.Client):
         GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
         while True:
-            if GPIO.input(channel) == GPIO.HIGH:
+            now = datetime.timestamp(datetime.now())
+
+            if GPIO.input(channel) == GPIO.HIGH && (has_run == None or has_run + timedelta(seconds=6000) <= now):
+                has_run = now
                 await self._handlePressDoorbell()
-                time.sleep(self.SLEEP)
 
     #
     # if doorbell is pressed create message and send to channel

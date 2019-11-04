@@ -14,7 +14,7 @@
 import discord
 import os
 import time
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 from datetime import datetime, timedelta
 
@@ -42,16 +42,18 @@ class MrDoorbell(discord.Client):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self._channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        has_run = None
+        if (os.getenv('STATE')):
+            await self.change_presence(activity=discord.Game(os.getenv('STATE')))
+
+        has_run = none
 
         while True:
-            now = datetime.timestamp(datetime.now())
+            now = datetime.now()
 
             # block for 60 seconds after pressing doorbell
-            if GPIO.input(self._channel) == GPIO.HIGH and (has_run == None or has_run + timedelta(seconds=6000) <= now):
+            if GPIO.input(self._channel) == GPIO.HIGH and (has_run == None or has_run + timedelta(seconds=60) <= now):
                 has_run = now
                 await self._handlePressDoorbell()
-
     #
     #
     #

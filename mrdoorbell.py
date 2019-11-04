@@ -38,11 +38,15 @@ class MrDoorbell(discord.Client):
     #
     def _add_gpio(self):
 
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
-        GPIO.setup(os.getenv('GPIO_PIN'), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        channel = int(os.getenv('GPIO_PIN'))
 
-        GPIO.add_event_detect(os.getenv('GPIO_PIN'), GPIO.RISING, callback=self._handlePressDoorbell) # Setup event on pin 10 rising edge
+        GPIO.setwarnings(False)
+
+        # Use physical pin numbering
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+        GPIO.add_event_detect(channel, GPIO.RISING, callback=self._handlePressDoorbell)
 
     #
     # if doorbell is pressed create message and send to channel

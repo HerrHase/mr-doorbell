@@ -18,21 +18,52 @@ load_dotenv(find_dotenv())
 #
 class MrDoorbell(discord.Client):
 
+    #
+    #
+    #
+    #
     async def on_ready(self):
         await self._handleDoorbell()
 
+    #
+    #
+    #
+    #
     async def _handleDoorbell(self):
 
         # getting channel
         id = int(os.getenv('CHANNEL'))
-        current_channel = self.get_channel(id)
+        channel = self.get_channel(id)
 
-        # embed message
-        embed = discord.Embed(title=os.getenv('MESSAGE_TITLE'), color=discord.Colour.red(), description=os.getenv('MESSAGE_TEXT'))
-        embed.set_image(url=os.getenv('MESSAGE_IMAGE'))
+        # get mentions for members
+        mentions = self._get_mentions(channel)
 
-        # send message
-        await current_channel.send(embed=embed)
+        # create content and send message, add image if MESSAGE_IMAGE is set
+        content = os.getenv('MESSAGE_TEXT') + mentions
+        if (os.getenv('MESSAGE_IMAGE')):
+            content += os.getenv('MESSAGE_IMAGE')
+
+        await channel.send(content=content)
+
+    #
+    #
+    #
+    #
+    def _get_mentions(self, channel):
+
+        mentions = ' @everyone '
+
+        if (os.getenv('ROLE')):
+
+            mentions = ''
+
+            for member in channel.members:
+                for role in member.roles:
+                    if role.name == os.getenv('ROLE'):
+                        mentions += ' ' + member.mention + ' '
+
+        return mentions
+
 
 # let it rain
 mrdoorbell = MrDoorbell()

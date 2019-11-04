@@ -13,6 +13,7 @@
 
 import discord
 import os
+import time
 import RPi.GPIO as GPIO
 
 from dotenv import load_dotenv, find_dotenv
@@ -25,6 +26,7 @@ load_dotenv(find_dotenv())
 class MrDoorbell(discord.Client):
 
     EVERYONE = '@everyone'
+    SLEEP = 60
 
     #
     #
@@ -46,15 +48,19 @@ class MrDoorbell(discord.Client):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        GPIO.add_event_detect(channel, GPIO.RISING, callback=self._handlePressDoorbell)
+        GPIO.add_event_detect(channel, GPIO.RISING)
+
+        while True:
+            if GPIO.input(channel) == GPIO.HIGH:
+                await self._handlePressDoorbell()
+                time.sleep(SLEEP)
+
 
     #
     # if doorbell is pressed create message and send to channel
     #
     #
     async def _handlePressDoorbell(self):
-
-        GPIO.cleanup()
 
         # getting channel
         id = int(os.getenv('CHANNEL'))
@@ -66,7 +72,7 @@ class MrDoorbell(discord.Client):
         # create content and send message, add image if MESSAGE_IMAGE is set
         content = os.getenv('MESSAGE_TEXT') + ' ' + mentions
         if (os.getenv('MESSAGE_IMAGE')):
-            content += os.getenv('MESSAGE_IMAGE')
+            content += ' ' + os.getenv('MESSAGE_IMAGE')
 
         await channel.send(content=content)
 
@@ -90,7 +96,7 @@ class MrDoorbell(discord.Client):
 
                     # adding role
                     if role.name == os.getenv('ROLE'):
-                        mentions += member.mention
+                        mentions += member.mention + ' '
 
             mentions = mentions.strip()
 

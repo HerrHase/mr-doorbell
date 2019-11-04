@@ -44,7 +44,7 @@ class MrDoorbell(discord.Client):
 
         # Use physical pin numbering
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
         GPIO.add_event_detect(channel, GPIO.RISING, callback=self._handlePressDoorbell)
 

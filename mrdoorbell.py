@@ -32,14 +32,6 @@ class MrDoorbell(discord.Client):
     #
     #
     async def on_ready(self):
-        self._add_gpio()
-
-    #
-    # adding pin for press button
-    #
-    #
-    def _add_gpio(self):
-
         channel = int(os.getenv('GPIO_PIN'))
 
         GPIO.setwarnings(False)
@@ -52,7 +44,6 @@ class MrDoorbell(discord.Client):
             if GPIO.input(channel) == GPIO.HIGH:
                 await self._handlePressDoorbell()
                 time.sleep(self.SLEEP)
-
 
     #
     # if doorbell is pressed create message and send to channel
